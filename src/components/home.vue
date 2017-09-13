@@ -1,13 +1,24 @@
 <template>
     <div class="home-box">
-        <el-table :data="tableData" style="width: 100%">
-            <el-table-column prop="title" label="title"></el-table-column>
-            <el-table-column prop="date" label="date"></el-table-column>
-            <el-table-column prop="content" label="content"></el-table-column>
-            <el-table-column prop="isPublish" label="isPublish"></el-table-column>
-            <el-table-column prop="comment" label="comment"></el-table-column>
-            <el-table-column prop="tags" label="tags"></el-table-column>
-        </el-table>
+        <!-- <el-table :data="tableData" style="width: 100%">
+                            <el-table-column prop="title" label="title"></el-table-column>
+                            <el-table-column prop="email" label="email"></el-table-column>
+                            <el-table-column prop="content" label="content"></el-table-column>
+                            <el-table-column prop="isPublish" label="isPublish"></el-table-column>
+                            <el-table-column prop="comment" label="comment"></el-table-column>
+                            <el-table-column prop="tags" label="tags"></el-table-column>
+                        </el-table> -->
+        <form v-va='form'>
+            <div>
+                <input type="text" v-model="form.email" prop="email,邮箱" />
+            </div>
+            <input type="text" v-model="form.name" prop="name,姓名" />
+            <select v-model="form.address" prop="address,地址">
+                <option>1</option>
+                <option>2</option>
+            </select>
+            <p @click="cli">123123123123</p>
+        </form>
     </div>
 </template>
 
@@ -19,16 +30,40 @@ export default {
         return {
             tableData: [],
             form: {
-                date: "",
-                address: "",
-                name: ""
+                email: "1",
+                address: "2",
+                name: "3"
+            },
+            ruleValidate: {
+                email: {
+                    type: "Mail",
+                    noEmpty: true,
+                    message: '邮箱',
+                    trigger: 'blur',
+                    min: 1,
+                    max: 4
+                },
+                name: {
+                    noEmpty: true,
+                    message: '姓名',
+                    max: 5
+                },
+                address:{
+                    noEmpty: true,
+                    message: '邮箱',
+                    trigger: 'blur',
+                    min: 1,
+                }
             }
         }
     },
-    created () {
-        this.getAjax();
+    created() {
+        
     },
     methods: {
+        cli(){
+            log(this.form_valid)
+        },
         getAjax() {
             ajax.login(this.form)
                 .then(rs => {

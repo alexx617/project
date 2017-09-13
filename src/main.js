@@ -5,11 +5,14 @@ import App from './App'
 import router from './router'
 import flexible from 'utils/flexible'
 import utils from 'utils/utils'
+import va from 'utils/va'
 import store from 'store/store'
 import element from 'element-ui'
 import 'element-ui/lib/theme-default/index.css'
 
-import 'styles/reset.css'
+Vue.use(va)
+
+// import 'styles/reset.css'
 
 Vue.use(flexible);
 Vue.use(element);
