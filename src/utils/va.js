@@ -53,13 +53,25 @@ function assert(condition, message) {
   }
 }
 
-function VaResult(ruleType, ruleValue, isPass, errMsg) {
-  this.ruleType = ruleType
-  this.ruleValue = ruleValue
-  this.isPass = isPass
-  this.errMsg = errMsg
+// Rule构造器(最后需要发给form的结果)
+function Rule(ruleType, ruleValue, errMsg, check) {
+  this.ruleType = ruleType;
+  this.ruleValue = ruleValue;
+  this.errMsg = `${errMsg}不能为空` || '';
+  this.check = chk(check, ruleType, ruleValue);
 }
 
+// 循环需要验证的项目
+function chk(me, ruleType, ruleValue) {
+  var cc = {};
+  me.forEach(item => {
+    var isPass = checkRule(item, ruleType, ruleValue);
+    cc[item] = isPass;
+  })
+  return cc
+}
+
+//验证每一项
 function checkRule(item, ruleType, ruleValue) {
   var ruleCheckers = {
     noEmpty: noEmpty,
@@ -71,22 +83,20 @@ function checkRule(item, ruleType, ruleValue) {
   return isPass
 }
 
-// Rule构造器
-function Rule(ruleType, ruleValue, errMsg, check) {
-  this.ruleType = ruleType;
-  this.ruleValue = ruleValue;
-  this.errMsg = `${errMsg}不能为空` || '';
-  this.check = chk(check, ruleType, ruleValue);
+// 获得不同的报错信息
+function getErrMsg(vaForm, ruleType, ruleValue) {
+  var tag = vaForm.tag
+  var errMsgs = {
+    NonEmpty: `${tag}不能为空`,
+    reg: `${tag}格式错误`,
+    limit: `${tag}必须在${ruleValue[0]}与${ruleValue[1]}之间`,
+    equal: `两次${tag}不相同`,
+    length: `${tag}长度必须在${ruleValue[0]}与${ruleValue[1]}之间`,
+    unique: `${tag}不能相同`
+  }
+  return errMsgs[ruleType]
 }
 
-function chk(me, ruleType, ruleValue) {
-  var cc = {};
-  me.forEach(item => {
-    var isPass = checkRule(item, ruleType, ruleValue);
-    cc[item] = isPass;
-  })
-  return cc
-}
 
 var MyPlugin = {};
 MyPlugin.install = function (Vue, options) {
@@ -116,12 +126,11 @@ MyPlugin.install = function (Vue, options) {
       for (let i = 0; i < formName.length; i++) {
         if (ruleValidate[formName[i]]) { //验证规则
           var value_ = me[formName[i]];
-          var item_ = []
+          var item_ = []; //需要验证的项目
           for (let j in ruleValidate[formName[i]]) {
             item_.push(j)
           }
           optionalRule.push(new Rule(ruleValidate[formName[i]], value_, formMsg[i], item_));
-          //   checkRule(rule_item[formName[i]], ruleValidate[formName[i]], value_)
         }
       }
       log(optionalRule)
