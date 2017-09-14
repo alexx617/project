@@ -53,19 +53,27 @@ function assert(condition, message) {
   }
 }
 
-function checkRule(forms,rule,value_) {
-	var ruleCheckers = {
-		type:regList[rule.type],
-		noEmpty: noEmpty,
-		min:min,
-		max:max
-	}
-	log(forms)
-	
-	// var ruleChecker = ruleCheckers[rule];
-	// log(forms)
-	// log(name)
-	// log(rule)
+// var ruleCheckers = {
+//   // type:regList[rule.type],
+//   noEmpty: noEmpty(),
+//   min: min(),
+//   max: max()
+// }
+
+function checkRule(forms, rule, value_) {
+  var ruleCheckers = {
+    // type: regList[rule.type],
+    noEmpty: noEmpty,
+    min: min,
+    max: max
+  }
+}
+
+// Rule构造器
+function Rule(ruleType, ruleValue, errMsg) {
+    this.ruleType = ruleType
+    this.ruleValue = ruleValue
+    this.errMsg = `${errMsg}不能为空` || ''
 }
 
 var MyPlugin = {};
@@ -79,25 +87,27 @@ MyPlugin.install = function (Vue, options) {
       var formName = []; //需要验证的表单名称
       var formMsg = []; //需要验证的表单消息
       var formDOM = el; //获取表单下面的所有表单数据
-      var validate = {}; //验证是否通过
+      var validate = {}; //小项是否已全部通过
       for (var i = 0; i < formDOM.elements.length; i++) {
         var prop = formDOM.elements[i];
-        var item = prop.attributes["prop"].value.split(',');
-        formName.push(item[0]);
-        formMsg.push(item[1]);
-        validate[item[0]] = false;
+        if (prop.attributes["prop"]) {
+          var item = prop.attributes["prop"].value.split(',');
+          formName.push(item[0]);
+          formMsg.push(item[1]);
+          validate[item[0]] = false;
+        }
       }
-	  var rule_item = JSON.parse(JSON.stringify(ruleValidate));
+      var rule_item = JSON.parse(JSON.stringify(ruleValidate));
+	  let trst = {};
+	  
       for (let i = 0; i < formName.length; i++) {
         if (ruleValidate[formName[i]]) { //验证规则
 		  var value_ = me[formName[i]];
-		  for (let j in ruleValidate[formName[i]]) {//循环出每个检验为false
-			//   rule_item[formName[i]][j] = `${rule_item[formName[i]][j]}`(value_);
-		  log(`${[j]}`(value_))
-		  }
-		//   checkRule(rule_item[formName[i]],ruleValidate[formName[i]],value_)
+		  var find = new Rule(ruleValidate[formName[i]],value_,formMsg[i])
+        //   checkRule(rule_item[formName[i]], ruleValidate[formName[i]], value_)
         }
 	  }
+	  log(find)
       vm[item_form + '_valid'] = validate;
     }
 
