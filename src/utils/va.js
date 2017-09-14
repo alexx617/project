@@ -54,21 +54,21 @@ function assert(condition, message) {
 }
 
 function VaResult(ruleType, ruleValue, isPass, errMsg) {
-    this.ruleType = ruleType
-    this.ruleValue = ruleValue
-    this.isPass = isPass
-    this.errMsg = errMsg
+  this.ruleType = ruleType
+  this.ruleValue = ruleValue
+  this.isPass = isPass
+  this.errMsg = errMsg
 }
 
-function checkRule(item,ruleType,ruleValue){
-	var ruleCheckers = {
-		noEmpty: noEmpty,
-		min: min,
-		max: max
-	}
-	var checker = ruleCheckers[item];
-	var isPass = checker(ruleValue,ruleType);
-	log(isPass)
+function checkRule(item, ruleType, ruleValue) {
+  var ruleCheckers = {
+    noEmpty: noEmpty,
+    min: min,
+    max: max
+  }
+  var checker = ruleCheckers[item];
+  var isPass = checker(ruleValue, ruleType);
+  return isPass
 }
 
 // Rule构造器
@@ -76,13 +76,16 @@ function Rule(ruleType, ruleValue, errMsg, check) {
   this.ruleType = ruleType;
   this.ruleValue = ruleValue;
   this.errMsg = `${errMsg}不能为空` || '';
-  this.check = chk(check,ruleType,ruleValue);
+  this.check = chk(check, ruleType, ruleValue);
 }
 
-function chk(me,ruleType,ruleValue) {
-  return me.map(item => {
-	checkRule(item,ruleType,ruleValue)
+function chk(me, ruleType, ruleValue) {
+  var cc = {};
+  me.forEach(item => {
+    var isPass = checkRule(item, ruleType, ruleValue);
+    cc[item] = isPass;
   })
+  return cc
 }
 
 var MyPlugin = {};
@@ -121,6 +124,7 @@ MyPlugin.install = function (Vue, options) {
           //   checkRule(rule_item[formName[i]], ruleValidate[formName[i]], value_)
         }
       }
+      log(optionalRule)
       vm[item_form + '_valid'] = validate;
     }
 
