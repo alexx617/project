@@ -53,22 +53,38 @@ function assert(condition, message) {
   }
 }
 
+
+// 获得不同的报错信息
+function getErrMsg(item, errMsg, ruleValue) {
+  var errMsgs = {
+    noEmpty: `${errMsg}不能为空`,
+    max: `${errMsg}不能大于${ruleValue}`,
+    min: `${errMsg}不能小于${ruleValue}`,
+  }
+  return errMsgs[item]
+}
+
 // Rule构造器(最后需要发给form的结果)
 function Rule(ruleType, ruleValue, errMsg, check) {
+  var chk_ = chk(check, ruleType, ruleValue, errMsg);
+  this.check = chk_[0];
+  this.errMsg = chk_[1];
   this.ruleType = ruleType;
   this.ruleValue = ruleValue;
-  this.errMsg = `${errMsg}不能为空` || '';
-  this.check = chk(check, ruleType, ruleValue);
 }
 
 // 循环需要验证的项目
-function chk(me, ruleType, ruleValue) {
+function chk(me, ruleType, ruleValue, errMsg) {
   var cc = {};
+  var firstErr = null;
   me.forEach(item => {
     var isPass = checkRule(item, ruleType, ruleValue);
     cc[item] = isPass;
+    if (firstErr === null && isPass === false) {
+      firstErr = getErrMsg(item, errMsg, ruleValue)
+    }
   })
-  return cc
+  return [cc, firstErr]
 }
 
 //验证每一项
@@ -83,19 +99,6 @@ function checkRule(item, ruleType, ruleValue) {
   return isPass
 }
 
-// 获得不同的报错信息
-function getErrMsg(vaForm, ruleType, ruleValue) {
-  var tag = vaForm.tag
-  var errMsgs = {
-    NonEmpty: `${tag}不能为空`,
-    reg: `${tag}格式错误`,
-    limit: `${tag}必须在${ruleValue[0]}与${ruleValue[1]}之间`,
-    equal: `两次${tag}不相同`,
-    length: `${tag}长度必须在${ruleValue[0]}与${ruleValue[1]}之间`,
-    unique: `${tag}不能相同`
-  }
-  return errMsgs[ruleType]
-}
 
 
 var MyPlugin = {};
@@ -134,7 +137,7 @@ MyPlugin.install = function (Vue, options) {
         }
       }
       log(optionalRule)
-      vm[item_form + '_valid'] = validate;
+      vm[item_form + '_valid'] = optionalRule;
     }
 
   })

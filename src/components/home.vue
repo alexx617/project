@@ -30,7 +30,7 @@ export default {
         return {
             tableData: [],
             form: {
-                email: "1",
+                email: "",
                 address: "2",
                 name: "3"
             },
