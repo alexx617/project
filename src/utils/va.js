@@ -100,7 +100,6 @@ function checkRule(item, ruleType, ruleValue) {
 }
 
 
-
 var MyPlugin = {};
 MyPlugin.install = function (Vue, options) {
   Vue.directive('va', {
@@ -123,9 +122,6 @@ MyPlugin.install = function (Vue, options) {
           validate[item[0]] = false;
         }
       }
-      var rule_item = JSON.parse(JSON.stringify(ruleValidate));
-      let test = [];
-
       for (let i = 0; i < formName.length; i++) {
         if (ruleValidate[formName[i]]) { //验证规则
           var value_ = me[formName[i]];
@@ -139,19 +135,7 @@ MyPlugin.install = function (Vue, options) {
       log(optionalRule)
       vm[item_form + '_valid'] = optionalRule;
     }
-
   })
-  // 3. 注入一些组件选项
-  Vue.mixin({
-    mounted: function () {
-
-    }
-
-  })
-  // 4. 添加一个实例方法
-  Vue.prototype.$myMethod = function (methodOptions) {
-    // 一些逻辑……
-  }
 }
 
 module.exports = MyPlugin;

@@ -1,13 +1,13 @@
 <template>
     <div class="home-box">
         <!-- <el-table :data="tableData" style="width: 100%">
-                            <el-table-column prop="title" label="title"></el-table-column>
-                            <el-table-column prop="email" label="email"></el-table-column>
-                            <el-table-column prop="content" label="content"></el-table-column>
-                            <el-table-column prop="isPublish" label="isPublish"></el-table-column>
-                            <el-table-column prop="comment" label="comment"></el-table-column>
-                            <el-table-column prop="tags" label="tags"></el-table-column>
-                        </el-table> -->
+            <el-table-column prop="title" label="title"></el-table-column>
+            <el-table-column prop="email" label="email"></el-table-column>
+            <el-table-column prop="content" label="content"></el-table-column>
+            <el-table-column prop="isPublish" label="isPublish"></el-table-column>
+            <el-table-column prop="comment" label="comment"></el-table-column>
+            <el-table-column prop="tags" label="tags"></el-table-column>
+        </el-table> -->
         <form v-va='form'>
             <div>
                 <input type="text" v-model="form.email" prop="email,邮箱" />
