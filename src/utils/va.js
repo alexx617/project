@@ -79,16 +79,23 @@ function assert(condition, message) {
 // check:需要验证的项目
 // formData:整个表信息
 function Rule(ruleType, ruleValue, errMsg, check, formData, formName, dom_) {
-  var chk_ = chk(check, ruleType, ruleValue, errMsg, formData, formName, dom_);
+  var chk_ = chk(check, ruleType, ruleValue, errMsg, formData, formName);
   this.check = chk_[0];
   this.errMsg = chk_[1];
   this.ruleType = ruleType;
   this.ruleValue = ruleValue;
   this.ruleName = formName;
+  if (errClass) {
+    if (this.errMsg) {
+      addClass(dom_, errClass)
+    } else {
+      removeClass(dom_, errClass)
+    }
+  }
 }
 
 // 2.循环需要验证的项目
-function chk(check, ruleType, ruleValue, errMsg, formData, formName, dom_) {
+function chk(check, ruleType, ruleValue, errMsg, formData, formName) {
   var vaResult = {};
   var firstErr = null;
   check.forEach(item => {
@@ -96,13 +103,6 @@ function chk(check, ruleType, ruleValue, errMsg, formData, formName, dom_) {
     vaResult[item] = isPass;
     if (firstErr === null && isPass === false) {
       firstErr = getErrMsg(item, errMsg, ruleValue, ruleType);
-    }
-    if (errClass) {
-      if (isPass === false) {
-        addClass(dom_, errClass)
-      } else {
-        removeClass(dom_, errClass)
-      }
     }
   })
   return [vaResult, firstErr] //各个项目是否通过,和第一个错误的报错信息,结果返回给1
@@ -144,7 +144,7 @@ function getErrMsg(item, errMsg, ruleValue, ruleType) {
 
 
 var MyPlugin = {};
-var errClass = '';//错误提示的class
+var errClass = ''; //错误提示的class
 MyPlugin.install = function (Vue, options) {
   Vue.directive('va', {
     update(el, binding, vnode, oldVnode) {
@@ -157,10 +157,10 @@ MyPlugin.install = function (Vue, options) {
       var formDOM = el; //获取表单DOM里面的所有表单
       var el_dom = []; //获取每一项的DOM
       var optionalRule = [];
-      assert(formDOM, '未设置需要验证哪个表单')
-      assert(formData, '未设置表单信息')
-      if (formDOM.attributes["err"]) { //获取错误的class
-        errClass = formDOM.attributes["err"].value;
+      assert(formDOM, '未设置需要验证哪个表单 <form v-va="xxx"></form>')
+      assert(formData, '未设置表单信息 ruleValidate:{}')
+      if (formDOM.attributes["errClass"]) { //获取错误的class
+        errClass = formDOM.attributes["errClass"].value;
       }
       for (var i = 0; i < formDOM.elements.length; i++) { //获取所有需要验证项
         var prop = formDOM.elements[i];

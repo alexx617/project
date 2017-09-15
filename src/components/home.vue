@@ -8,11 +8,11 @@
                     <el-table-column prop="comment" label="comment"></el-table-column>
                     <el-table-column prop="tags" label="tags"></el-table-column>
                 </el-table> -->
-        <form v-va='form' err="err">
+        <form v-va='form' errClass="err">
             <div>
                 <input type="text" v-model="form.email" prop="email,邮箱" />
             </div>
-            <input type="text" v-model="form.name" prop="name,姓名" />
+            <input type="text" v-model="form.name" prop="name,姓名" placeholder="输入"/>
             <select v-model="form.address" prop="address,地址">
                 <option>1</option>
                 <option>2</option>
