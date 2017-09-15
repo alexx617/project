@@ -30,9 +30,9 @@ export default {
         return {
             tableData: [],
             form: {
-                email: "",
+                email: "2",
                 address: "2",
-                name: "3"
+                name: "8"
             },
             ruleValidate: {
                 email: {

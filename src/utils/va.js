@@ -20,11 +20,11 @@ function noEmpty(ruleValue) {
 }
 //检测最大值
 function max(ruleValue, max) {
-  return ruleValue.lenth <= max ? true : false;
+  return ruleValue <= max ? true : false;
 }
 //检测最小值
 function min(ruleValue, min) {
-  return ruleValue.lenth >= min ? true : false;
+  return ruleValue >= min ? true : false;
 }
 // //检测正则
 // function checkReg(ruleValue, vaForm, va) {
@@ -95,7 +95,7 @@ function checkRule(item, ruleType, ruleValue) {
     max: max
   }
   var checker = ruleCheckers[item];
-  var isPass = checker(ruleValue, ruleType);
+  var isPass = checker(ruleValue, ruleType[item]);
   return isPass
 }
 
@@ -111,7 +111,6 @@ MyPlugin.install = function (Vue, options) {
       var formName = []; //需要验证的表单名称
       var formMsg = []; //需要验证的表单消息
       var formDOM = el; //获取表单下面的所有表单数据
-      var validate = {}; //小项是否已全部通过
       var optionalRule = [];
       for (var i = 0; i < formDOM.elements.length; i++) {
         var prop = formDOM.elements[i];
@@ -119,7 +118,6 @@ MyPlugin.install = function (Vue, options) {
           var item = prop.attributes["prop"].value.split(',');
           formName.push(item[0]);
           formMsg.push(item[1]);
-          validate[item[0]] = false;
         }
       }
       for (let i = 0; i < formName.length; i++) {
