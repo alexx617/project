@@ -15,6 +15,7 @@ function removeClass(dom, errClass) {
   }
 }
 
+// 没给class的话默认显示错误DOM,检验错误的话添加DOM
 function appendChild(dom, errMsg, formName) {
   var hasClass = !!dom.className.match(`axva-${formName}`)
   if (!hasClass) {
@@ -25,7 +26,7 @@ function appendChild(dom, errMsg, formName) {
     dom.parentNode.insertBefore(p, dom.nextSibling)
   }
 }
-
+// 没给class的话默认显示错误DOM,检验正确的话去掉DOM
 function removeChild(dom, errMsg, formName) {
   var hasClass = !!dom.className.match(`axva-${formName}`)
   if (hasClass) {
@@ -102,6 +103,7 @@ function Rule(ruleType, ruleValue, errMsg, check, formData, formName, dom_) {
   var chk_ = chk(check, ruleType, ruleValue, errMsg, formData, formName);
   this.check = chk_[0];
   this.errMsg = chk_[1];
+  this.pass = chk_[2];
   this.ruleType = ruleType;
   this.ruleValue = ruleValue;
   this.ruleName = formName;
@@ -116,14 +118,16 @@ function Rule(ruleType, ruleValue, errMsg, check, formData, formName, dom_) {
 function chk(check, ruleType, ruleValue, errMsg, formData, formName) {
   var vaResult = {};
   var firstErr = null;
+  var pass = true;
   check.forEach(item => {
     var isPass = checkRule(item, ruleType, ruleValue, formData);
     vaResult[item] = isPass;
     if (firstErr === null && isPass === false) {
       firstErr = getErrMsg(item, errMsg, ruleValue, ruleType);
+      pass = false;
     }
   })
-  return [vaResult, firstErr] //各个项目是否通过,和第一个错误的报错信息,结果返回给1
+  return [vaResult, firstErr, pass] //各个项目是否通过,和第一个错误的报错信息,结果返回给1
 }
 
 //3.验证每一项
@@ -163,46 +167,53 @@ function getErrMsg(item, errMsg, ruleValue, ruleType) {
 
 var MyPlugin = {};
 var errClass = ''; //错误提示的class
+var validate = ''; //最终结果
 MyPlugin.install = function (Vue, options) {
   Vue.directive('va', {
-    update(el, binding, vnode, oldVnode) {
-      var vm = vnode.context //当前的vue实例
-      var ruleValidate = vm.ruleValidate; //验证规则
-      var item_form = binding.expression; //model到哪个表单里
-      var formData = vm[item_form]; //表单数据
-      var formName = []; //需要验证的表单名称
-      var formMsg = []; //需要验证的表单消息
-      var formDOM = el; //获取表单DOM里面的所有表单
-      var el_dom = []; //获取每一项的DOM
-      var optionalRule = [];
-      assert(formDOM, '未设置需要验证哪个表单 <form v-va="xxx"></form>')
-      assert(formData, '未设置表单信息 ruleValidate:{}')
-      if (formDOM.attributes["errClass"]) { //获取错误的class
-        errClass = formDOM.attributes["errClass"].value;
-      }
-      for (var i = 0; i < formDOM.elements.length; i++) { //获取所有需要验证项
-        var prop = formDOM.elements[i];
-        if (prop.attributes["prop"]) {
-          var item = prop.attributes["prop"].value.split(',');
-          formName.push(item[0]);
-          formMsg.push(item[1]);
-          el_dom.push(prop)
+      bind(el, binding, vnode, oldVnode) {
+        var vm = vnode.context //当前的vue实例
+        var ruleValidate = vm.ruleValidate; //验证规则
+        var item_form = binding.expression; //model到哪个表单里
+        var formData = vm[item_form]; //表单数据
+        var formName = []; //需要验证的表单名称
+        var formMsg = []; //需要验证的表单消息
+        var formDOM = el; //获取表单DOM里面的所有表单
+        var el_dom = []; //获取每一项的DOM
+        var optionalRule = [];
+        assert(formDOM, '未设置需要验证哪个表单 <form v-va="xxx"></form>')
+        assert(formData, '未设置表单信息 ruleValidate:{}')
+        if (formDOM.attributes["errClass"]) { //获取错误的class
+          errClass = formDOM.attributes["errClass"].value;
         }
-      }
-      for (let i = 0; i < formName.length; i++) {
-        if (ruleValidate[formName[i]]) { //验证规则
-          var value_ = formData[formName[i]];
-          var item_ = []; //需要验证的项目
-          for (let j in ruleValidate[formName[i]]) {
-            item_.push(j)
+        for (var i = 0; i < formDOM.elements.length; i++) { //获取所有需要验证项
+          var prop = formDOM.elements[i];
+          if (prop.attributes["prop"]) {
+            var item = prop.attributes["prop"].value.split(',');
+            formName.push(item[0]);
+            formMsg.push(item[1]);
+            el_dom.push(prop)
           }
-          optionalRule.push(new Rule(ruleValidate[formName[i]], value_, formMsg[i], item_, formData, formName[i], el_dom[i]));
         }
+        for (let i = 0; i < formName.length; i++) {
+          if (ruleValidate[formName[i]]) { //验证规则
+            var value_ = formData[formName[i]];
+            var item_ = []; //需要验证的项目
+            for (let j in ruleValidate[formName[i]]) {
+              item_.push(j)
+            }
+            optionalRule.push(new Rule(ruleValidate[formName[i]], value_, formMsg[i], item_, formData, formName[i], el_dom[i]));
+          }
+        }
+        log(optionalRule)
+        vm[item_form + '_valid'] = optionalRule;
+        validate = optionalRule.every(x => { //最终结果全部项目是否校验正确
+          return x.pass;
+        });
       }
-      log(optionalRule)
-      vm[item_form + '_valid'] = optionalRule;
+    }),
+    Vue.prototype.$axva = function (methodOptions) {
+		return validate
     }
-  })
 }
 
 module.exports = MyPlugin;

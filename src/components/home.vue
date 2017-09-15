@@ -17,7 +17,7 @@
                 <option>1</option>
                 <option>2</option>
             </select>
-            <label><input name="Fruit" type="checkbox" value="true" v-model="form.check" prop="check,框" />苹果 </label>
+            <!-- <label><input name="Fruit" type="checkbox" value="true" v-model="form.check" prop="check,框" />苹果 </label> -->
             <p @click="cli">123123123123</p>
         </form>
     </div>
@@ -31,10 +31,10 @@ export default {
         return {
             tableData: [],
             form: {
-                email: "wwww",
+                email: "wwww@qq.com",
                 address: "2",
-                name: "",
-                check: ''
+                name: "2",
+                check: '2'
             },
             ruleValidate: {
                 email: {
@@ -52,15 +52,15 @@ export default {
                     noEmpty: true,
                     min: 1,
                 },
-                check:{
-                    accepted:true,
-                    message:'jjjj'
-                }
+                // check:{
+                //     accepted:true,
+                //     message:'jjjj'
+                // }
             }
         }
     },
-    created() {
-
+    mounted () {
+      log(this.$axva())  
     },
     methods: {
         cli() {
