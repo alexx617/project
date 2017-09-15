@@ -85,7 +85,7 @@ function Rule(ruleType, ruleValue, errMsg, check, formData, formName, dom_) {
   this.ruleType = ruleType;
   this.ruleValue = ruleValue;
   this.ruleName = formName;
-  if (errClass) {
+  if (errClass) {//有给错误class的话,如校验结果为false添加class
     if (this.errMsg) {
       addClass(dom_, errClass)
     } else {
