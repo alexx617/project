@@ -28,7 +28,7 @@ var regList = {
   Money: /^([1-9]\d*|[0-9]\d*\.\d{1,2}|0)$/,
   Answer: /^\S+$/,
   Mail: /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/,
-  number: /^\d+$/,
+  Number: /^\d+$/,
 }
 
 // 4.检测
@@ -144,7 +144,7 @@ function getErrMsg(item, errMsg, ruleValue, ruleType) {
 
 
 var MyPlugin = {};
-var errClass = '';
+var errClass = '';//错误提示的class
 MyPlugin.install = function (Vue, options) {
   Vue.directive('va', {
     update(el, binding, vnode, oldVnode) {
