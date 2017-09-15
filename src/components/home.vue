@@ -30,14 +30,16 @@ export default {
         return {
             tableData: [],
             form: {
-                email: "2",
+                email: "wwww",
                 address: "2",
-                name: "2"
+                name: ""
             },
             ruleValidate: {
                 email: {
                     type: "Mail",
+                    pattern:/^\d+$/,
                     noEmpty: true,
+                    message:'只能为数字',
                     min: 1,
                     max: 4
                 },

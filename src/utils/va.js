@@ -40,6 +40,10 @@ function equal(value, rule, ruleType, formData) {
 function unequal(value, rule, ruleType, formData) {
   return value !== formData[rule] ? true : false
 }
+//检测自定义规则
+function pattern(value, rule, ruleType, formData) {
+	return rule.test(value) ? true : false
+}
 
 // 断言函数
 function assert(condition, message) {
@@ -87,14 +91,18 @@ function checkRule(item, ruleType, ruleValue, formData) {
     max: max,
     equal: equal,
     unequal: unequal,
+    pattern: pattern,
   }
-  var checker = ruleCheckers[item];
-  var isPass = checker(ruleValue, ruleType[item], ruleType, formData); //这里开始校验
+  if(item!=='message'){
+	var checker = ruleCheckers[item];
+	var isPass = checker(ruleValue, ruleType[item], ruleType, formData); //这里开始校验
+  }
   return isPass //是否通过,结果返回给2
 }
 
 // 5.获得不同的报错信息
 function getErrMsg(item, errMsg, ruleValue, ruleType) {
+	log()
   var errMsgs = {
     type: `${errMsg}格式不正确`,
     noEmpty: `${errMsg}不能为空`,
@@ -102,6 +110,7 @@ function getErrMsg(item, errMsg, ruleValue, ruleType) {
     min: `${errMsg}不能小于${ruleType[item]}`,
     equal: `两次${errMsg}不相同`,
     unequal: `${errMsg}不能相同`,
+    pattern: `${errMsg}${ruleType.message}`,
   }
   return errMsgs[item]
 }
