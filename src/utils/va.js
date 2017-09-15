@@ -15,6 +15,26 @@ function removeClass(dom, errClass) {
   }
 }
 
+function appendChild(dom, errMsg, formName) {
+  var hasClass = !!dom.className.match(`axva-${formName}`)
+  if (!hasClass) {
+    dom.className += `axva-${formName}`;
+    var p = document.createElement("p");
+    p.innerHTML = errMsg;
+    p.setAttribute('class', `axva-${formName}-err`)
+    dom.parentNode.insertBefore(p, dom.nextSibling)
+  }
+}
+
+function removeChild(dom, errMsg, formName) {
+  var hasClass = !!dom.className.match(`axva-${formName}`)
+  if (hasClass) {
+    var p = document.getElementsByClassName(`axva-${formName}-err`)[0];
+    dom.className = dom.className.replace(`axva-${formName}`, '');
+    dom.parentNode.removeChild(p);
+  }
+}
+
 //常用正则
 var regList = {
   ImgCode: /^[0-9a-zA-Z]{4}$/,
@@ -52,7 +72,7 @@ function type(value, rule) {
 function equal(value, rule, ruleType, formData) {
   return value === formData[rule] ? true : false
 }
-//检测相等
+//检测不相等
 function unequal(value, rule, ruleType, formData) {
   return value !== formData[rule] ? true : false
 }
@@ -85,12 +105,10 @@ function Rule(ruleType, ruleValue, errMsg, check, formData, formName, dom_) {
   this.ruleType = ruleType;
   this.ruleValue = ruleValue;
   this.ruleName = formName;
-  if (errClass) {//有给错误class的话,如校验结果为false添加class
-    if (this.errMsg) {
-      addClass(dom_, errClass)
-    } else {
-      removeClass(dom_, errClass)
-    }
+  if (errClass) { //有给错误class的话,如校验结果为false添加class
+    this.errMsg ? addClass(dom_, errClass) : removeClass(dom_, errClass);
+  } else { //否则默认添加错误提示dom
+    this.errMsg ? appendChild(dom_, chk_[1], formName) : removeChild(dom_, chk_[1], formName);
   }
 }
 

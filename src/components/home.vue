@@ -8,7 +8,7 @@
                     <el-table-column prop="comment" label="comment"></el-table-column>
                     <el-table-column prop="tags" label="tags"></el-table-column>
                 </el-table> -->
-        <form v-va='form' errClass="err">
+        <form v-va='form'>
             <div>
                 <input type="text" v-model="form.email" prop="email,邮箱" />
             </div>
