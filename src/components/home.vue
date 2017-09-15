@@ -36,14 +36,15 @@ export default {
             },
             ruleValidate: {
                 email: {
-                    // type: "Mail",
+                    type: "Mail",
                     noEmpty: true,
                     min: 1,
                     max: 4
                 },
                 name: {
                     noEmpty: true,
-                    max: 5
+                    max: 5,
+                    equal:'address'
                 },
                 // address:{
                 //     noEmpty: true,

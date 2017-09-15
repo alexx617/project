@@ -1,5 +1,6 @@
 const log = console.log;
-//常用正则表
+
+//常用正则
 var regList = {
   ImgCode: /^[0-9a-zA-Z]{4}$/,
   SmsCode: /^\d{4}$/,
@@ -14,37 +15,28 @@ var regList = {
   Mail: /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/
 }
 
+// 4.检测
 //检测非空
-function noEmpty(ruleValue) {
-  return ruleValue.trim() ? true : false
+function noEmpty(value) {
+  return value.trim() ? true : false
 }
 //检测最大值
-function max(ruleValue, max) {
-  return ruleValue <= max ? true : false;
+function max(value, rule) {
+  return value <= rule ? true : false;
 }
 //检测最小值
-function min(ruleValue, min) {
-  return ruleValue >= min ? true : false;
+function min(value, rule) {
+  return value >= rule ? true : false;
 }
-// //检测正则
-// function checkReg(ruleValue, vaForm, va) {
-//     return ruleValue.test(vaForm.value) ? true : false
-// }
-// //检测数字区间
-// function checkLimit(ruleValue, vaForm, va) {
-//     var value = vaForm.value
-//     return ((+value >= ruleValue[0]) && (+value <= ruleValue[1])) ? true : false
-// }
-// //检测相等
-// function checkEqual(ruleValue, vaForm, va) {
-//     var target = va.forms[ruleValue]
-//     return target.value === vaForm.value ? true : false
-// }
-// //检测字符长度
-// function checkCharLength(ruleValue, vaForm, va) {
-//     var length = vaForm.value.length
-//     return ((+length >= ruleValue[0]) && (+length <= ruleValue[1])) ? true : false
-// }
+//检测正则
+function type(value, rule) {
+  return regList[rule].test(value) ? true : false
+}
+//检测相等
+function equal(value, rule) {
+  log(value)
+  // return regList[rule].test(value) ? true : false
+}
 
 // 断言函数
 function assert(condition, message) {
@@ -54,17 +46,8 @@ function assert(condition, message) {
 }
 
 
-// 获得不同的报错信息
-function getErrMsg(item, errMsg, ruleValue) {
-  var errMsgs = {
-    noEmpty: `${errMsg}不能为空`,
-    max: `${errMsg}不能大于${ruleValue}`,
-    min: `${errMsg}不能小于${ruleValue}`,
-  }
-  return errMsgs[item]
-}
 
-// Rule构造器(最后需要发给form的结果)
+// 1.Rule构造器(最后需要发给form的结果)
 function Rule(ruleType, ruleValue, errMsg, check) {
   var chk_ = chk(check, ruleType, ruleValue, errMsg);
   this.check = chk_[0];
@@ -73,7 +56,7 @@ function Rule(ruleType, ruleValue, errMsg, check) {
   this.ruleValue = ruleValue;
 }
 
-// 循环需要验证的项目
+// 2.循环需要验证的项目
 function chk(me, ruleType, ruleValue, errMsg) {
   var cc = {};
   var firstErr = null;
@@ -81,22 +64,37 @@ function chk(me, ruleType, ruleValue, errMsg) {
     var isPass = checkRule(item, ruleType, ruleValue);
     cc[item] = isPass;
     if (firstErr === null && isPass === false) {
-      firstErr = getErrMsg(item, errMsg, ruleValue)
+      firstErr = getErrMsg(item, errMsg, ruleValue, ruleType)
     }
   })
   return [cc, firstErr]
 }
 
-//验证每一项
+//3.验证每一项
 function checkRule(item, ruleType, ruleValue) {
-  var ruleCheckers = {
+  var ruleCheckers = { //这里添加验证规则
+    type: type,
     noEmpty: noEmpty,
     min: min,
-    max: max
+    max: max,
+    equal: equal
   }
   var checker = ruleCheckers[item];
   var isPass = checker(ruleValue, ruleType[item]);
   return isPass
+}
+
+
+// 5.获得不同的报错信息
+function getErrMsg(item, errMsg, ruleValue, ruleType) {
+  var errMsgs = { //验证错误后提示信息
+    type: `${errMsg}格式不正确`,
+    noEmpty: `${errMsg}不能为空`,
+    max: `${errMsg}不能大于${ruleType[item]}`,
+    min: `${errMsg}不能小于${ruleType[item]}`,
+    equal: `两次${errMsg}不相同`,
+  }
+  return errMsgs[item]
 }
 
 
@@ -112,7 +110,7 @@ MyPlugin.install = function (Vue, options) {
       var formMsg = []; //需要验证的表单消息
       var formDOM = el; //获取表单下面的所有表单数据
       var optionalRule = [];
-      for (var i = 0; i < formDOM.elements.length; i++) {
+      for (var i = 0; i < formDOM.elements.length; i++) { //获取所有需要验证项
         var prop = formDOM.elements[i];
         if (prop.attributes["prop"]) {
           var item = prop.attributes["prop"].value.split(',');
