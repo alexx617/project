@@ -170,7 +170,7 @@ var errClass = ''; //错误提示的class
 var validate = ''; //最终结果
 MyPlugin.install = function (Vue, options) {
   Vue.directive('va', {
-      bind(el, binding, vnode, oldVnode) {
+      update(el, binding, vnode, oldVnode) {
         var vm = vnode.context //当前的vue实例
         var ruleValidate = vm.ruleValidate; //验证规则
         var item_form = binding.expression; //model到哪个表单里
@@ -212,7 +212,7 @@ MyPlugin.install = function (Vue, options) {
       }
     }),
     Vue.prototype.$axva = function (methodOptions) {
-		return validate
+      return validate
     }
 }
 
