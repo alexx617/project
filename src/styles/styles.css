@@ -1,0 +1,6 @@
+.err {
+  color: #F0574F;
+}
+.err input::-webkit-input-placeholder {
+  color: #F0574F;
+}

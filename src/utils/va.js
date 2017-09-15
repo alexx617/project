@@ -1,5 +1,20 @@
 const log = console.log;
 
+// 给错误的dom添加错误class
+function addClass(dom, errClass) {
+  var hasClass = !!dom.className.match(errClass)
+  if (!hasClass) {
+    dom.className += errClass;
+  }
+}
+// 检验正确后去除错误class
+function removeClass(dom, errClass) {
+  var hasClass = !!dom.className.match(errClass)
+  if (hasClass) {
+    dom.className = dom.className.replace(errClass, '');
+  }
+}
+
 //常用正则
 var regList = {
   ImgCode: /^[0-9a-zA-Z]{4}$/,
@@ -13,7 +28,7 @@ var regList = {
   Money: /^([1-9]\d*|[0-9]\d*\.\d{1,2}|0)$/,
   Answer: /^\S+$/,
   Mail: /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/,
-  number:/^\d+$/,
+  number: /^\d+$/,
 }
 
 // 4.检测
@@ -57,31 +72,37 @@ function assert(condition, message) {
   }
 }
 
-
-
 // 1.Rule构造器(最后需要发给form的结果)
 // ruleType:用户给的规则
 // ruleValue:值
 // errMsg:错误信息
 // check:需要验证的项目
 // formData:整个表信息
-function Rule(ruleType, ruleValue, errMsg, check, formData) {
-  var chk_ = chk(check, ruleType, ruleValue, errMsg, formData);
+function Rule(ruleType, ruleValue, errMsg, check, formData, formName, dom_) {
+  var chk_ = chk(check, ruleType, ruleValue, errMsg, formData, formName, dom_);
   this.check = chk_[0];
   this.errMsg = chk_[1];
   this.ruleType = ruleType;
   this.ruleValue = ruleValue;
+  this.ruleName = formName;
 }
 
 // 2.循环需要验证的项目
-function chk(check, ruleType, ruleValue, errMsg, formData) {
+function chk(check, ruleType, ruleValue, errMsg, formData, formName, dom_) {
   var vaResult = {};
   var firstErr = null;
   check.forEach(item => {
     var isPass = checkRule(item, ruleType, ruleValue, formData);
     vaResult[item] = isPass;
     if (firstErr === null && isPass === false) {
-      firstErr = getErrMsg(item, errMsg, ruleValue, ruleType)
+      firstErr = getErrMsg(item, errMsg, ruleValue, ruleType);
+    }
+    if (errClass) {
+      if (isPass === false) {
+        addClass(dom_, errClass)
+      } else {
+        removeClass(dom_, errClass)
+      }
     }
   })
   return [vaResult, firstErr] //各个项目是否通过,和第一个错误的报错信息,结果返回给1
@@ -123,6 +144,7 @@ function getErrMsg(item, errMsg, ruleValue, ruleType) {
 
 
 var MyPlugin = {};
+var errClass = '';
 MyPlugin.install = function (Vue, options) {
   Vue.directive('va', {
     update(el, binding, vnode, oldVnode) {
@@ -132,19 +154,23 @@ MyPlugin.install = function (Vue, options) {
       var formData = vm[item_form]; //表单数据
       var formName = []; //需要验证的表单名称
       var formMsg = []; //需要验证的表单消息
-	  var formDOM = el; //获取表单DOM里面的所有表单
+      var formDOM = el; //获取表单DOM里面的所有表单
+      var el_dom = []; //获取每一项的DOM
       var optionalRule = [];
       assert(formDOM, '未设置需要验证哪个表单')
-      //   assert(vm.va, '实例的data选项上，未设置va对象') //实例上如果没有设置结果则报错。
       assert(formData, '未设置表单信息')
+      if (formDOM.attributes["err"]) { //获取错误的class
+        errClass = formDOM.attributes["err"].value;
+      }
       for (var i = 0; i < formDOM.elements.length; i++) { //获取所有需要验证项
-		var prop = formDOM.elements[i];
+        var prop = formDOM.elements[i];
         if (prop.attributes["prop"]) {
           var item = prop.attributes["prop"].value.split(',');
           formName.push(item[0]);
           formMsg.push(item[1]);
+          el_dom.push(prop)
         }
-	  }
+      }
       for (let i = 0; i < formName.length; i++) {
         if (ruleValidate[formName[i]]) { //验证规则
           var value_ = formData[formName[i]];
@@ -152,7 +178,7 @@ MyPlugin.install = function (Vue, options) {
           for (let j in ruleValidate[formName[i]]) {
             item_.push(j)
           }
-          optionalRule.push(new Rule(ruleValidate[formName[i]], value_, formMsg[i], item_, formData));
+          optionalRule.push(new Rule(ruleValidate[formName[i]], value_, formMsg[i], item_, formData, formName[i], el_dom[i]));
         }
       }
       log(optionalRule)

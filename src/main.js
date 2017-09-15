@@ -13,6 +13,7 @@ import 'element-ui/lib/theme-default/index.css'
 Vue.use(va)
 
 // import 'styles/reset.css'
+import 'styles/styles.css'
 
 Vue.use(flexible);
 Vue.use(element);

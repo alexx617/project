@@ -8,7 +8,7 @@
                     <el-table-column prop="comment" label="comment"></el-table-column>
                     <el-table-column prop="tags" label="tags"></el-table-column>
                 </el-table> -->
-        <form v-va='form'>
+        <form v-va='form' err="err">
             <div>
                 <input type="text" v-model="form.email" prop="email,邮箱" />
             </div>
@@ -39,11 +39,11 @@ export default {
             ruleValidate: {
                 email: {
                     type: "Mail",
-                    pattern: /^\d+$/,
+                    // pattern: /^\d+$/,
                     noEmpty: true,
-                    message: '只能为数字',
-                    min: 1,
-                    max: 4
+                    // message: '只能为数字',
+                    // min: 1,
+                    // max: 4
                 },
                 name: {
                     noEmpty: true,
