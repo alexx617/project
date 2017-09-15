@@ -13,7 +13,7 @@
                 <input type="text" v-model="form.email" prop="email,邮箱" />
             </div>
             <input type="text" v-model="form.name" prop="name,姓名" />
-            <select v-model="form.address">
+            <select v-model="form.address" prop="address,地址" >
                 <option>1</option>
                 <option>2</option>
             </select>
@@ -32,7 +32,7 @@ export default {
             form: {
                 email: "2",
                 address: "2",
-                name: "8"
+                name: "2"
             },
             ruleValidate: {
                 email: {
@@ -46,10 +46,10 @@ export default {
                     max: 5,
                     equal:'address'
                 },
-                // address:{
-                //     noEmpty: true,
-                //     min: 1,
-                // }
+                address:{
+                    noEmpty: true,
+                    min: 1,
+                }
             }
         }
     },
