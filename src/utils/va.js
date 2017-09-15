@@ -12,13 +12,14 @@ var regList = {
   BankNum: /^\d{10,19}$/,
   Money: /^([1-9]\d*|[0-9]\d*\.\d{1,2}|0)$/,
   Answer: /^\S+$/,
-  Mail: /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/
+  Mail: /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/,
+  number:/^\d+$/,
 }
 
 // 4.检测
 //检测非空
 function noEmpty(value) {
-  return value.trim() ? true : false
+  return value.toString().trim() ? true : false
 }
 //检测最大值
 function max(value, rule) {
@@ -42,13 +43,17 @@ function unequal(value, rule, ruleType, formData) {
 }
 //检测自定义规则
 function pattern(value, rule, ruleType, formData) {
-	return rule.test(value) ? true : false
+  return rule.test(value) ? true : false
+}
+//检测必须选择
+function accepted(value, rule, ruleType, formData) {
+  return value ? true : false
 }
 
 // 断言函数
 function assert(condition, message) {
   if (!condition) {
-    console.error('[is-warn]:' + message)
+    console.error('[va-warn]:' + message)
   }
 }
 
@@ -92,17 +97,17 @@ function checkRule(item, ruleType, ruleValue, formData) {
     equal: equal,
     unequal: unequal,
     pattern: pattern,
+    accepted: accepted,
   }
-  if(item!=='message'){
-	var checker = ruleCheckers[item];
-	var isPass = checker(ruleValue, ruleType[item], ruleType, formData); //这里开始校验
+  if (item !== 'message') {
+    var checker = ruleCheckers[item];
+    var isPass = checker(ruleValue, ruleType[item], ruleType, formData); //这里开始校验
   }
   return isPass //是否通过,结果返回给2
 }
 
 // 5.获得不同的报错信息
 function getErrMsg(item, errMsg, ruleValue, ruleType) {
-	log()
   var errMsgs = {
     type: `${errMsg}格式不正确`,
     noEmpty: `${errMsg}不能为空`,
@@ -111,6 +116,7 @@ function getErrMsg(item, errMsg, ruleValue, ruleType) {
     equal: `两次${errMsg}不相同`,
     unequal: `${errMsg}不能相同`,
     pattern: `${errMsg}${ruleType.message}`,
+    accepted: `${errMsg}${ruleType.message}`,
   }
   return errMsgs[item]
 }
@@ -119,17 +125,20 @@ function getErrMsg(item, errMsg, ruleValue, ruleType) {
 var MyPlugin = {};
 MyPlugin.install = function (Vue, options) {
   Vue.directive('va', {
-    bind(el, binding, vnode, oldVnode) {
+    update(el, binding, vnode, oldVnode) {
       var vm = vnode.context //当前的vue实例
       var ruleValidate = vm.ruleValidate; //验证规则
       var item_form = binding.expression; //model到哪个表单里
       var formData = vm[item_form]; //表单数据
       var formName = []; //需要验证的表单名称
       var formMsg = []; //需要验证的表单消息
-      var formDOM = el; //获取表单DOM里面的所有表单
+	  var formDOM = el; //获取表单DOM里面的所有表单
       var optionalRule = [];
+      assert(formDOM, '未设置需要验证哪个表单')
+      //   assert(vm.va, '实例的data选项上，未设置va对象') //实例上如果没有设置结果则报错。
+      assert(formData, '未设置表单信息')
       for (var i = 0; i < formDOM.elements.length; i++) { //获取所有需要验证项
-        var prop = formDOM.elements[i];
+		var prop = formDOM.elements[i];
         if (prop.attributes["prop"]) {
           var item = prop.attributes["prop"].value.split(',');
           formName.push(item[0]);

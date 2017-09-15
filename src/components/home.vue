@@ -1,22 +1,23 @@
 <template>
     <div class="home-box">
         <!-- <el-table :data="tableData" style="width: 100%">
-            <el-table-column prop="title" label="title"></el-table-column>
-            <el-table-column prop="email" label="email"></el-table-column>
-            <el-table-column prop="content" label="content"></el-table-column>
-            <el-table-column prop="isPublish" label="isPublish"></el-table-column>
-            <el-table-column prop="comment" label="comment"></el-table-column>
-            <el-table-column prop="tags" label="tags"></el-table-column>
-        </el-table> -->
+                    <el-table-column prop="title" label="title"></el-table-column>
+                    <el-table-column prop="email" label="email"></el-table-column>
+                    <el-table-column prop="content" label="content"></el-table-column>
+                    <el-table-column prop="isPublish" label="isPublish"></el-table-column>
+                    <el-table-column prop="comment" label="comment"></el-table-column>
+                    <el-table-column prop="tags" label="tags"></el-table-column>
+                </el-table> -->
         <form v-va='form'>
             <div>
                 <input type="text" v-model="form.email" prop="email,邮箱" />
             </div>
             <input type="text" v-model="form.name" prop="name,姓名" />
-            <select v-model="form.address" prop="address,地址" >
+            <select v-model="form.address" prop="address,地址">
                 <option>1</option>
                 <option>2</option>
             </select>
+            <label><input name="Fruit" type="checkbox" value="true" v-model="form.check" prop="check,框" />苹果 </label>
             <p @click="cli">123123123123</p>
         </form>
     </div>
@@ -32,34 +33,37 @@ export default {
             form: {
                 email: "wwww",
                 address: "2",
-                name: ""
+                name: "",
+                check: ''
             },
             ruleValidate: {
                 email: {
                     type: "Mail",
-                    pattern:/^\d+$/,
+                    pattern: /^\d+$/,
                     noEmpty: true,
-                    message:'只能为数字',
+                    message: '只能为数字',
                     min: 1,
                     max: 4
                 },
                 name: {
                     noEmpty: true,
-                    max: 5,
-                    equal:'address'
                 },
-                address:{
+                address: {
                     noEmpty: true,
                     min: 1,
+                },
+                check:{
+                    accepted:true,
+                    message:'jjjj'
                 }
             }
         }
     },
     created() {
-        
+
     },
     methods: {
-        cli(){
+        cli() {
             log(this.form_valid)
         },
         getAjax() {
