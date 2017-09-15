@@ -133,14 +133,14 @@ function chk(check, ruleType, ruleValue, errMsg, formData, formName) {
 //3.验证每一项
 function checkRule(item, ruleType, ruleValue, formData) {
   var ruleCheckers = { //这里添加验证规则
-    type: type,
-    noEmpty: noEmpty,
-    min: min,
-    max: max,
-    equal: equal,
-    unequal: unequal,
-    pattern: pattern,
-    accepted: accepted,
+    type,
+    noEmpty,
+    min,
+    max,
+    equal,
+    unequal,
+    pattern,
+    accepted,
   }
   if (item !== 'message') {
     var checker = ruleCheckers[item];
