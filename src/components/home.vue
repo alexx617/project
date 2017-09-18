@@ -60,7 +60,9 @@ export default {
         }
     },
     mounted () {
-      log(this.$axva())  
+      log(this.$axva(validate=>{
+          log(validate)
+      }));
     },
     methods: {
         cli() {

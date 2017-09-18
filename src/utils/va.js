@@ -229,8 +229,8 @@ MyPlugin.install = function (Vue, options) {
         va();
       }
     }),
-    Vue.prototype.$axva = function (methodOptions) {
-      return validate
+    Vue.prototype.$axva = function () {
+      return validate;
     }
 }
 
