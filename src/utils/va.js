@@ -164,51 +164,69 @@ function getErrMsg(item, errMsg, ruleValue, ruleType) {
   return errMsgs[item]
 }
 
+function va() {
+  var vm = vnode_.context //当前的vue实例
+  var ruleValidate = vm.ruleValidate; //验证规则
+  var item_form = binding_.expression; //model到哪个表单里
+  var formData = vm[item_form]; //表单数据
+  var formName = []; //需要验证的表单名称
+  var formMsg = []; //需要验证的表单消息
+  var formDOM = el_; //获取表单DOM里面的所有表单
+  var el_dom = []; //获取每一项的DOM
+  var optionalRule = [];
+  assert(formDOM, '未设置需要验证哪个表单 <form v-va="xxx"></form>')
+  assert(formData, '未设置表单信息 ruleValidate:{}')
+  if (formDOM.attributes["errClass"]) { //获取错误的class
+    errClass = formDOM.attributes["errClass"].value;
+  }
+  for (var i = 0; i < formDOM.elements.length; i++) { //获取所有需要验证项
+    var prop = formDOM.elements[i];
+    if (prop.attributes["prop"]) {
+      var item = prop.attributes["prop"].value.split(',');
+      formName.push(item[0]);
+      formMsg.push(item[1]);
+      el_dom.push(prop)
+    }
+  }
+  for (let i = 0; i < formName.length; i++) {
+    if (ruleValidate[formName[i]]) { //验证规则
+      var value_ = formData[formName[i]];
+      var item_ = []; //需要验证的项目
+      for (let j in ruleValidate[formName[i]]) {
+        item_.push(j)
+      }
+      optionalRule.push(new Rule(ruleValidate[formName[i]], value_, formMsg[i], item_, formData, formName[i], el_dom[i]));
+    }
+  }
+  log(optionalRule)
+  vm[item_form + '_valid'] = optionalRule;
+  validate = optionalRule.every(x => { //最终结果全部项目是否校验正确
+    return x.pass;
+  });
+}
 
 var MyPlugin = {};
 var errClass = ''; //错误提示的class
 var validate = ''; //最终结果
+var el_;
+var binding_;
+var vnode_;
+var oldVnode_;
 MyPlugin.install = function (Vue, options) {
   Vue.directive('va', {
+      bind(el, binding, vnode, oldVnode) {
+        el_ = el;
+        binding_ = binding;
+        vnode_ = vnode;
+        oldVnode_ = oldVnode;
+        va();
+      },
       update(el, binding, vnode, oldVnode) {
-        var vm = vnode.context //当前的vue实例
-        var ruleValidate = vm.ruleValidate; //验证规则
-        var item_form = binding.expression; //model到哪个表单里
-        var formData = vm[item_form]; //表单数据
-        var formName = []; //需要验证的表单名称
-        var formMsg = []; //需要验证的表单消息
-        var formDOM = el; //获取表单DOM里面的所有表单
-        var el_dom = []; //获取每一项的DOM
-        var optionalRule = [];
-        assert(formDOM, '未设置需要验证哪个表单 <form v-va="xxx"></form>')
-        assert(formData, '未设置表单信息 ruleValidate:{}')
-        if (formDOM.attributes["errClass"]) { //获取错误的class
-          errClass = formDOM.attributes["errClass"].value;
-        }
-        for (var i = 0; i < formDOM.elements.length; i++) { //获取所有需要验证项
-          var prop = formDOM.elements[i];
-          if (prop.attributes["prop"]) {
-            var item = prop.attributes["prop"].value.split(',');
-            formName.push(item[0]);
-            formMsg.push(item[1]);
-            el_dom.push(prop)
-          }
-        }
-        for (let i = 0; i < formName.length; i++) {
-          if (ruleValidate[formName[i]]) { //验证规则
-            var value_ = formData[formName[i]];
-            var item_ = []; //需要验证的项目
-            for (let j in ruleValidate[formName[i]]) {
-              item_.push(j)
-            }
-            optionalRule.push(new Rule(ruleValidate[formName[i]], value_, formMsg[i], item_, formData, formName[i], el_dom[i]));
-          }
-        }
-        log(optionalRule)
-        vm[item_form + '_valid'] = optionalRule;
-        validate = optionalRule.every(x => { //最终结果全部项目是否校验正确
-          return x.pass;
-        });
+        el_ = el;
+        binding_ = binding;
+        vnode_ = vnode;
+        oldVnode_ = oldVnode;
+        va();
       }
     }),
     Vue.prototype.$axva = function (methodOptions) {
