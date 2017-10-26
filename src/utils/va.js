@@ -4,7 +4,7 @@ const log = console.log;
 function addClass(dom, errClass) {
   var hasClass = !!dom.className.match(errClass)
   if (!hasClass) {
-    dom.className += errClass;
+    dom.className += ' '+ errClass;
   }
 }
 // 检验正确后去除错误class
@@ -59,11 +59,11 @@ function noEmpty(value) {
 }
 //检测最大值
 function max(value, rule) {
-  return value <= rule ? true : false;
+  return value.length <= rule ? true : false;
 }
 //检测最小值
 function min(value, rule) {
-  return value >= rule ? true : false;
+  return value.length >= rule ? true : false;
 }
 //检测正则
 function type(value, rule) {
@@ -194,8 +194,9 @@ function va() {
       var item_ = []; //需要验证的项目
       for (let j in ruleValidate[formName[i]]) {
         item_.push(j)
-      }
-      optionalRule.push(new Rule(ruleValidate[formName[i]], value_, formMsg[i], item_, formData, formName[i], el_dom[i]));
+	  }
+	  var itemname = formName[i];
+	  optionalRule[itemname] = new Rule(ruleValidate[formName[i]], value_, formMsg[i], item_, formData, formName[i], el_dom[i]);
     }
   }
   log(optionalRule)

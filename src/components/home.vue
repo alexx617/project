@@ -8,11 +8,11 @@
                     <el-table-column prop="comment" label="comment"></el-table-column>
                     <el-table-column prop="tags" label="tags"></el-table-column>
                 </el-table> -->
-        <form v-va='form'>
+        <form v-va='form' errClass='err'>
             <div>
                 <input type="text" v-model="form.email" prop="email,邮箱" />
             </div>
-            <input type="text" v-model="form.name" prop="name,姓名" placeholder="输入"/>
+            <input class='test' type="text" v-model="form.name" prop="name,姓名" placeholder="输入"/>
             <select v-model="form.address" prop="address,地址">
                 <option>1</option>
                 <option>2</option>
@@ -33,7 +33,7 @@ export default {
             form: {
                 email: "wwww@qq.com",
                 address: "2",
-                name: "2",
+                name: "2222",
                 check: '2'
             },
             ruleValidate: {
@@ -42,11 +42,11 @@ export default {
                     // pattern: /^\d+$/,
                     noEmpty: true,
                     // message: '只能为数字',
-                    // min: 1,
                     // max: 4
                 },
                 name: {
                     noEmpty: true,
+                    min: 4,
                 },
                 address: {
                     noEmpty: true,
