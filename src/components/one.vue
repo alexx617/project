@@ -1,23 +1,23 @@
 <template>
     <div>
-        <w-input></w-input>
+        <w-form :form="form"></w-form>
     </div>
 </template>
 
 <script>
 const log = console.log.bind(console.log);
+import { UI } from '../modules/one'
 export default {
-    data () {
+    data() {
         return {
-            
+            form: UI
         };
     },
-    components:{},
+    components: {},
     created() {
-        
     },
-    methods : {
-        
+    methods: {
+
     },
 }
 
