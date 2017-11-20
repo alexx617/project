@@ -33,6 +33,7 @@ module.exports = {
       'static': resolve('static'),
       'store': resolve('src/store'),
       'styles': resolve('src/styles'),
+      'widgets': resolve('src/components/widgets'),
     }
   },
   module: {

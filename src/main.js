@@ -9,6 +9,7 @@ import va from 'utils/va'
 import store from 'store/store'
 import element from 'element-ui'
 import 'element-ui/lib/theme-default/index.css'
+import Input from 'widgets/input'
 
 Vue.use(va)
 
@@ -17,6 +18,8 @@ import 'styles/styles.css'
 
 Vue.use(flexible);
 Vue.use(element);
+
+Vue.component(Input.name,Input);
 
 Vue.config.productionTip = false;
 
