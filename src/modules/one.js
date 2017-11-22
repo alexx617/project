@@ -22,7 +22,7 @@ let data = {
             inputType:'tel',
             format:{
                 delimiter: ['.'],
-                cleave: [3, 3],
+                cleave: [3,3],
                 repeat: true
             }
         }

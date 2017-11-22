@@ -87,20 +87,19 @@ export default {
             let result = '';
             let realityBegin = 0;//开始裁剪长度
             cleave.every((ele, i) => {
-                let de = delimiter[i];
                 if (reLength > ele) {
-                    if (repeat) {
+                    if (this.format.repeat) {
+                        result += val.substr(realityBegin, reLength - ele) + (de || '');
+                        realityBegin = reLength - ele;
+                    } else {
                         result += val.substr(realityBegin, ele) + (de || '');
                         realityBegin += ele;
                     }
-                    // else{
-                    //     result += val.substr(realityBegin, ele) + (de || '');
-                    //     realityBegin += ele;
-                    // }
                     reLength -= ele;
                     return true;
                 }
-            })
+            });
+            log(result)
             return result;
         }
     },
