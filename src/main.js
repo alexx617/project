@@ -6,16 +6,16 @@ import App from './App'
 import router from './router'
 import flexible from 'utils/flexible'
 import utils from 'utils/utils'
-import va from 'utils/va'
+import axva from 'axva'
 import store from 'store/store'
 import element from 'element-ui'
 import 'element-ui/lib/theme-default/index.css'
-import Input from 'widgets/input'
-import Form from 'widgets/common/form'
+import Input from 'components/form/base/input'
+import Form from 'components/form/form'
 
-Vue.use(va)
+Vue.use(axva)
 
-// import 'styles/reset.css'
+import 'styles/reset.css'
 import 'styles/styles.css'
 
 Vue.use(flexible);

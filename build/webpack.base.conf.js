@@ -34,6 +34,8 @@ module.exports = {
       'store': resolve('src/store'),
       'styles': resolve('src/styles'),
       'widgets': resolve('src/components/widgets'),
+      'modules': resolve('src/modules'),
+      'assets': resolve('src/assets'),
     }
   },
   module: {

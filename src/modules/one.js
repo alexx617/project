@@ -23,8 +23,13 @@ let data = {
             format:{
                 delimiter: ['.'],
                 cleave: [3,3],
-                repeat: true
+                reverse: true
             }
+        },
+        email: {
+            name: 'email',
+            tip: 'Email',
+            filedType: 'input'
         }
     }
 }

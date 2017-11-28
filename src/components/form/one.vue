@@ -6,7 +6,7 @@
 
 <script>
 const log = console.log.bind(console.log);
-import { UI } from '../modules/one'
+import { UI } from 'modules/one'
 export default {
     data() {
         return {
