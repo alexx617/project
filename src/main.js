@@ -10,7 +10,8 @@ import axva from 'axva'
 import store from 'store/store'
 import element from 'element-ui'
 import 'element-ui/lib/theme-default/index.css'
-import Input from 'components/form/base/input'
+import Inputtest from 'components/form/base/inputtest'
+import Input from 'components/form/base/Input'
 import Form from 'components/form/form'
 
 Vue.use(axva)
@@ -21,6 +22,7 @@ import 'styles/styles.css'
 Vue.use(flexible);
 Vue.use(element);
 
+Vue.component(Inputtest.name,Inputtest);
 Vue.component(Input.name,Input);
 Vue.component(Form.name,Form);
 

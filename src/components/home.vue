@@ -8,16 +8,21 @@
 const log = console.log
 import ajax from 'utils/ajax'
 import Cleave from 'vue-cleave/src/Cleave.vue'
+// import Cleave from '../utils/axcleave'
 export default {
     data() {
         return {
             formatedValue: '',
+            email: '',
             cleaveOptions: {
                 delimiters: ['.', '.', '-'],
                 blocks: [3, 3, 3, 2],
-                uppercase: true
             }
         }
+    },
+    created(){
+        // console.log(new Cleave('123123',this.cleaveOptions))
+        // console.log(new Cleave('123123',this.cleaveOptions))
     },
     watch: {
         'formatedValue': (val) => {

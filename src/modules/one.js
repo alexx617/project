@@ -9,10 +9,11 @@ let data = {
             filedType:'input',//input类型
             requestType: 'number',//必须输入数字
             inputType:'tel',
+            max:'11',
             format:{
-                delimiter: ['.', '.', '-'],
-                cleave: [3, 3, 3, 2]
-            }
+                delimiters: ['.', '.', '-'],
+                blocks: [3, 3, 3, 2]
+            },
         },
         money:{
             name:'money',
@@ -20,16 +21,23 @@ let data = {
             filedType:'input',//input类型
             requestType: 'money',//必须输入数字
             inputType:'tel',
+            max:'11',
             format:{
-                delimiter: ['.'],
-                cleave: [3,3],
-                reverse: true
+                numeral: true,
+                numeralThousandsGroupStyle: 'thousand'
             }
         },
         email: {
             name: 'email',
             tip: 'Email',
-            filedType: 'input'
+            filedType: 'input',
+            style:'width50',
+        },
+        address: {
+            name: 'address',
+            tip: 'Address',
+            filedType: 'input',
+            style:'width50-last'
         }
     }
 }

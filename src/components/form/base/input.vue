@@ -1,13 +1,15 @@
 <template>
-    <div class="formItem">
+    <div class="formItem" :class="className">
         <p>{{tip}}</p>
-        <input :type="type" @input="handleInput($event.target.value)" ref="input" :value="inputValue" :requestType="requestType" />
+        <span class="isMoney" v-if="isMoney">$</span>
+        <input :type="type" @input="setCurrentValue($event.target.value)" ref="input" :value="inputValue" :requestType="requestType" :class="[isMoney?'moneyL':'']" :maxlength="this.max" />
         <div class="close" :class="[value?'show':'hide']" @click="close(name)"></div>
     </div>
 </template>
 
 <script>
 const log = console.log.bind(console.log);
+import Cleave from 'cleave.js'
 export default {
     name: 'w-input',
     props: {
@@ -31,15 +33,25 @@ export default {
         className: {
             type: String,
         },
+        inputMaxLen: {
+            type: String,
+        },
         name: {
             type: String,
         }
     },
     data() {
+        let max_;
+        if(this.format&&this.format.delimiters){
+            max_ = Number(this.inputMaxLen)+Number(this.format.delimiters.length)
+        }else{
+            max_ = Number(this.inputMaxLen) || '';
+        }
         return {
-            currentValue: this.value,//原始value值
             inputCurrentCursor: 1,//每次输入的光标位置
-            inputValue: this.value,//原始value值,格式化后的值
+            inputValue: this.value,//格式化后的value值
+            cleave: null,
+            max:max_
         };
     },
     components: {},
@@ -64,17 +76,21 @@ export default {
             }
             this.setCurrentValue(val);
         },
+        format: {
+            deep: true,
+            handler (val) {
+                this.cleave.destroy()
+                this.cleave = new Cleave(this.$refs.input, this.format)
+            }
+        }
     },
     methods: {
         close(me) {
             this.setCurrentValue('');
         },
-        handleInput(value) {
-            this.inputCurrentCursor = this.$refs.input.selectionStart;//保存光标位置
-            this.setCurrentValue(value);
-        },
         setCurrentValue(value) {
-            if (value === this.currentValue) return;
+            // this.inputCurrentCursor = this.$refs.input.selectionStart;//保存光标位置
+            if (value === this.inputValue) return;
             if (this.isNumber || this.isMoney) {
                 value = value.toString().replace(/\D/g, '');
             }
@@ -83,9 +99,10 @@ export default {
         changeValue(value) {
             value = this.handleMoneyBefore(value);
             this.inputValue = value;
-            this.currentValue = value;
             this.$emit('input', value);//实际输入的样式
-            // this.formatInput(value);
+            if (this.format) {
+                this.formatInput(value);
+            }
         },
         handleMoneyBefore(value) {//如果为金额格式,默认头一位不能为零
             if (this.isMoney && (value.indexOf('0') === 0)) {
@@ -93,38 +110,16 @@ export default {
             }
             return value;
         },
-        // formatInput(val) {
-        //     if (this.isDate) return;
-        //     if (val) {
-        //         let { delimiter, cleave, reverse } = this.format;
-        //         val = this.handleFormatByCleave(val, delimiter, cleave, reverse);
-        //     }
-        //     this.inputValue = val;
-        //     this.$refs.input.value = val;//格式化后输入框的样式
-        //     // this.$emit('input', value);
-        // },
-        // handleFormatByCleave(val, delimiter, cleave, reverse) {
-        //     // val = this.removeDelimiter(val, delimiter);
-        //     let result = '';
-        //     let valSegs = [];
-        //     let cl = 0;
-        //     let de = 0;
-        //     for (let item of cleave) {
-        //         let seg = (val).substr(cl, item);//0-3 , 3-3
-        //         valSegs.push((delimiter[de - 1] || '') + seg);//undefined , 1
-        //         cl += item;//3 6
-        //         de++;//1 2
-        //         if (cl >= val.length) break;//3>1,6>2
-        //     }
-        //     result = valSegs.join('');
-        //     return result;
-        // },
-        // removeDelimiter(val, delimiter) {
-        //     delimiter.forEach(e => {
-        //         val = val.replace(/\${e}/g, '');
-        //     })
-        //     return val
-        // }
+        formatInput(val) {
+            if (this.isDate) return;
+            // this.cleave.destroy();
+            if (val) {
+                this.cleave = new Cleave(this.$refs.input, this.format)//格式化输入框
+            }
+            this.inputValue = val;
+            this.$refs.input.value = val;//格式化后输入框的样式
+            this.$emit('input', val);//实际输入的样式
+        },
     },
 }
 
@@ -144,8 +139,8 @@ export default {
   margin-top: 0.1rem;
 }
 .close {
-  width: 30px;
-  height: 35px;
+  width: 0.8rem;
+  height: 0.9rem;
   text-align: center;
   bottom: 0;
   right: 0;
@@ -160,5 +155,13 @@ export default {
 }
 .show {
   display: block;
+}
+.isMoney {
+  position: absolute;
+  bottom: 0.3rem;
+  left: 0.2rem;
+}
+.moneyL {
+  padding-left: 0.5rem !important;
 }
 </style>
