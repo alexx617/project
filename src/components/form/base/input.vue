@@ -115,10 +115,11 @@ export default {
             // this.cleave.destroy();
             if (val) {
                 this.cleave = new Cleave(this.$refs.input, this.format)//格式化输入框
+                console.log(this.cleave)
             }
-            this.inputValue = val;
-            this.$refs.input.value = val;//格式化后输入框的样式
-            this.$emit('input', val);//实际输入的样式
+            // this.inputValue = val;
+            // this.$refs.input.value = val;//格式化后输入框的样式
+            // this.$emit('input', val);//实际输入的样式
         },
     },
 }

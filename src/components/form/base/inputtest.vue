@@ -1,14 +1,14 @@
 <template>
-    <div class="formItem" :class="className">
-        <p>{{tip}}</p>
-  		<input :type="type" @input="setCurrentValue($event.target.value)" ref="input" :value="inputValue" :requestType="requestType" :class="[isMoney?'moneyL':'']" :maxlength="this.max" />
-  </div>
+	<div class="formItem" :class="className">
+		<p>{{tip}}</p>
+		<input :type="type" @input="setCurrentValue($event.target.value)" ref="input" :value="inputValue" :requestType="requestType" :class="[isMoney?'moneyL':'']" :maxlength="this.max" />
+	</div>
 </template>
 
 <script>
 import Cleave from 'cleave.js'
 export default {
-    name: 't-input',
+	name: 't-input',
 	props: {
 		value: {
 			type: [String, Number],
@@ -39,32 +39,35 @@ export default {
 		}
 	},
 
-  data () {
-    return {
-      cleave: null
-    }
-  },
+	data() {
+		return {
+			cleave: null
+		}
+	},
 
-  methods: {
-    emitEvent () {
-      this.$emit('input', this.$el.value)
-    }
-  },
+	methods: {
+		emitEvent() {
+			this.$emit('input', this.$refs.input.value)
+		},
+		setCurrentValue(val) {
 
-  mounted () {
-    this.$el.value = this.value
-    this.cleave = new Cleave(this.$el, this.format)
-    this.$el.addEventListener('input', this.emitEvent)
-  },
-  watch: {
-    format: {
-      deep: true,
-      handler (val) {
-        this.cleave.destroy()
-        this.cleave = new Cleave(this.$el, val)
-      }
-    }
-  },
+		}
+	},
+
+	mounted() {
+		this.$refs.input.value = this.value
+		this.cleave = new Cleave(this.$refs.input, this.format)
+		this.$refs.input.addEventListener('input', this.emitEvent)
+	},
+	watch: {
+		format: {
+			deep: true,
+			handler(val) {
+				this.cleave.destroy()
+				this.cleave = new Cleave(this.$refs.input, val)
+			}
+		}
+	},
 
 }
 </script>
