@@ -6,6 +6,7 @@ const demo = r => require.ensure([], () => r(require('components/demo')), 'home'
 const form = r => require.ensure([], () => r(require('components/form/form')), 'home')
 const one = r => require.ensure([], () => r(require('components/form/one')), 'home')
 const mask = r => require.ensure([], () => r(require('components/mask')), 'home')
+const mask_t = r => require.ensure([], () => r(require('components/mask_t')), 'home')
 
 Vue.use(VueRouter)
 
@@ -14,6 +15,7 @@ const routes = [
 	{ path: '/demo', name: 'demo', component: demo },
 	{ path: '/form', name: 'form', component: form },
 	{ path: '/mask', name: 'mask', component: mask },
+	{ path: '/mask_t', name: 'mask_t', component: mask_t },
 	{ path: '/', name: 'one', component: one },
 	{ path: '*', redirect: '/' }
 ]
