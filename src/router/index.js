@@ -13,7 +13,7 @@ const pic = r => require.ensure([], () => r(require('components/pic')), 'home')
 Vue.use(VueRouter)
 
 const routes = [
-	{ path: '/home', name: 'home', component: home },
+	{ path: '/home', name: 'home', component: home }
 	{ path: '/demo', name: 'demo', component: demo },
 	{ path: '/', name: 'demo1', component: demo1 },
 	{ path: '/form', name: 'form', component: form },
